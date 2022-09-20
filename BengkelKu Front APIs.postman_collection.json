@@ -1,0 +1,464 @@
+{
+	"info": {
+		"_postman_id": "a241128c-17f7-4eab-b61b-5f12510fbe19",
+		"name": "BengkelKu Front APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18461565"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Signup a new user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let prefixes = [\"08\", \"628\", \"+628\"];\r",
+									"let prefix = prefixes[Math.floor(Math.random() * prefixes.length)];\r",
+									"let generateNumber = pm.variables.replaceIn(\"{{$randomPhoneNumber}}\");\r",
+									"let phoneNumber = prefix + generateNumber;\r",
+									"\r",
+									"postman.setEnvironmentVariable(\"mobileNumber\", phoneNumber);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    postman.setEnvironmentVariable(\"typeToken\", jsonData.token_type);\r",
+									"    postman.setEnvironmentVariable(\"accessToken\", jsonData.access_token);\r",
+									"    postman.setEnvironmentVariable(\"refreshToken\", jsonData.refresh_token);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstname\": \"{{$randomFirstName}}\",\r\n    \"lastname\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomExampleEmail}}\",\r\n    \"mobile\": \"{{mobileNumber}}\",\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\",\r\n    \"subscribe_newsletter\": true,\r\n    \"tnc_policy\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/auth/signup",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signin an user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    postman.setEnvironmentVariable(\"typeToken\", jsonData.token_type);\r",
+									"    postman.setEnvironmentVariable(\"accessToken\", jsonData.access_token);\r",
+									"    postman.setEnvironmentVariable(\"refreshToken\", jsonData.refresh_token);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{email}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/auth/signin",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Blog",
+			"item": [
+				{
+					"name": "List Blog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/blogs",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"blogs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Blog by Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/blog-categories/{{slugBlogCategory}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"blog-categories",
+								"{{slugBlogCategory}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View Blog",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/blogs/{{slugBlogPost}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"blogs",
+								"{{slugBlogPost}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/blog-categories",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"blog-categories"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "FAQs",
+			"item": [
+				{
+					"name": "List FAQ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let faqs = jsonData.faqs;\r",
+									"    let faq = faqs[Math.floor(Math.random() * (faqs.length - 1))].slug;\r",
+									"\r",
+									"    postman.setEnvironmentVariable(\"slugFaqPost\", faq);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/faqs",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"faqs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List FAQ by Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let faqs = jsonData.faqs;\r",
+									"    let faq = faqs[Math.floor(Math.random() * (faqs.length - 1))].slug;\r",
+									"\r",
+									"    postman.setEnvironmentVariable(\"slugFaqPost\", faq);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{domain}}/faq-category/{{slugFaqCategory}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"faq-category",
+								"{{slugFaqCategory}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View FAQ",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/faqs/{{slugFaqPost}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"faqs",
+								"{{slugFaqPost}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Category",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let categories = jsonData.categories;\r",
+									"    let category = categories[Math.floor(Math.random() * (categories.length - 1))].slug;\r",
+									"\r",
+									"    postman.setEnvironmentVariable(\"slugFaqCategory\", category);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/faq-category",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"faq-category"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Most Asked Frequently",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/faqs/most-asked",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"faqs",
+								"most-asked"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Wishlist",
+			"item": [
+				{
+					"name": "Get List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{domain}}/wishlists",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"wishlists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Wishlist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product_id\": \"{{productId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/wishlists/add",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"wishlists",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Remove Wishlist",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{domain}}/wishlists/{{productId}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"wishlists",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
