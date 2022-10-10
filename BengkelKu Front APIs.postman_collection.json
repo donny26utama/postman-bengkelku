@@ -257,6 +257,171 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/auth/signout",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"signout"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Guest tokenizer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"guest_{{$timestamp}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/auth/guest-token",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"guest-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/auth/profile",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/auth/profile",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "View User",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/users/{{customer_id}}",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"users",
+								"{{customer_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Change user password",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"password\": \"{{password}}\",\r\n    \"password_confirmation\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{domain}}/auth/change-password",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"auth",
+								"change-password"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -498,13 +663,35 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{domain}}/products/search",
+							"raw": "{{domain}}/products/search?q=fdr&ob&sc&pmin=&pmax=",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"products",
 								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "fdr"
+								},
+								{
+									"key": "ob",
+									"value": null
+								},
+								{
+									"key": "sc",
+									"value": null
+								},
+								{
+									"key": "pmin",
+									"value": ""
+								},
+								{
+									"key": "pmax",
+									"value": ""
+								}
 							]
 						}
 					},
@@ -516,13 +703,13 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{domain}}/products/{{productId}}",
+							"raw": "{{domain}}/products/{{product_id}}",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"products",
-								"{{productId}}"
+								"{{product_id}}"
 							]
 						}
 					},
@@ -743,6 +930,20 @@
 				},
 				{
 					"name": "Add user address",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {\r",
+									"    const jsonData = pm.response.json();\r",
+									"    postman.setEnvironmentVariable(\"address_id\", jsonData.address.address_id);\r",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -758,7 +959,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"\",\n    \"address\": \"\",\n    \"phone\": \"\",\n    \"reciever_name\": \"\",\n    \"country_id\": \"\",\n    \"state_id\": \"\",\n    \"city_id\": \"\",\n    \"district_id\": \"\",\n    \"postal_code\": \"\",\n    \"longitude\": \"\",\n    \"latitude\": \"\"\n}",
+							"raw": "{\n    \"title\": \"{{$randomStreetName}}\",\n    \"address\": \"{{$randomStreetAddress}}\",\n    \"phone\": \"{{$randomPhoneNumber}}\",\n    \"reciever_name\": \"{{$randomFullName}}\",\n    \"country_id\": \"{{country_id}}\",\n    \"state_id\": \"{{state_id}}\",\n    \"city_id\": \"{{city_id}}\",\n    \"district_id\": \"{{district_id}}\",\n    \"postal_code\": \"12345\",\n    \"longitude\": \"{{$randomLongitude}}\",\n    \"latitude\": \"{{$randomLatitude}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -794,7 +995,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"\",\n    \"address\": \"\",\n    \"phone\": \"\",\n    \"reciever_name\": \"\",\n    \"country_id\": \"\",\n    \"state_id\": \"\",\n    \"city_id\": \"\",\n    \"district_id\": \"\",\n    \"postal_code\": \"\",\n    \"longitude\": \"\",\n    \"latitude\": \"\"\n}",
+							"raw": "{\n    \"title\": \"{{$randomStreetName}}\",\n    \"address\": \"{{$randomStreetAddress}}\",\n    \"phone\": \"{{$randomPhoneNumber}}\",\n    \"reciever_name\": \"{{$randomFullName}}\",\n    \"country_id\": \"{{country_id}}\",\n    \"state_id\": \"{{state_id}}\",\n    \"city_id\": \"{{city_id}}\",\n    \"district_id\": \"{{district_id}}\",\n    \"postal_code\": \"12345\",\n    \"longitude\": \"{{$randomLongitude}}\",\n    \"latitude\": \"{{$randomLatitude}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -992,7 +1193,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"product_id\": \"\",\n    \"variant_id\": \"\",\n    \"quantity\": \"\"\n}",
+							"raw": "{\n    \"product_id\": \"{{product_id}}\",\n    \"variant_id\": \"\",\n    \"quantity\": \"{{$randomInt}}\",\n    \"notes\": \"\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1045,13 +1246,50 @@
 			"name": "Shipment",
 			"item": [
 				{
-					"name": "Get available courier & cost",
+					"name": "Get shipment list",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{domain}}/shipments",
+							"host": [
+								"{{domain}}"
+							],
+							"path": [
+								"shipments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Calculate shipment cost",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"city_id\": \"\",\n    \"weight\": \"\"\n}",
+							"raw": "{\n    \"district_id\": \"{{district_id}}\",\n    \"weight\": \"3\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1059,12 +1297,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{domain}}/shipments/cost",
+							"raw": "{{domain}}/shipments/{{shipment_id}}/cost",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
 								"shipments",
+								"{{shipment_id}}",
 								"cost"
 							]
 						}
@@ -1180,7 +1419,7 @@
 					"response": []
 				},
 				{
-					"name": "Create an order",
+					"name": "Checkout an order",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1204,12 +1443,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{domain}}/orders",
+							"raw": "{{domain}}/orders/checkout",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
-								"orders"
+								"orders",
+								"checkout"
 							]
 						}
 					},
@@ -1367,7 +1607,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"\"\n}",
+							"raw": "{\n    \"email\": \"{{$randomExampleEmail}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1375,13 +1615,12 @@
 							}
 						},
 						"url": {
-							"raw": "{{domain}}/newsletters/submit",
+							"raw": "{{domain}}/newsletters",
 							"host": [
 								"{{domain}}"
 							],
 							"path": [
-								"newsletters",
-								"submit"
+								"newsletters"
 							]
 						}
 					},
